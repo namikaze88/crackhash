@@ -24,13 +24,21 @@ if len(sys.argv) != 2:
     exit()
 
 wanted_hash = sys.argv[1]
-password_file = "/usr/share/wordlists/rockyou.txt"
+
+PASSWORD_FILE = "/usr/share/wordlists/rockyou.txt"
+
+try:
+    # Attempt to 'read' password file.
+    open(PASSWORD_FILE, 'r', encoding='latin-1')
+except FileNotFoundError:
+    raise FileNotFoundError("{} does not exist. Install the rockyou.txt word list from an online source.")
+
 attempts = 0
 
 display_banner()
 
 with log.progress("Attempting to crack: {}!\n".format(wanted_hash)) as p:
-    with open(password_file, "r", encoding='latin-1') as password_list:
+    with open(PASSWORD_FILE, "r", encoding='latin-1') as password_list:
         for password in password_list:
             password = password.strip("\n").encode('latin-1')
             password_hash = sha256sumhex(password)
@@ -39,8 +47,9 @@ with log.progress("Attempting to crack: {}!\n".format(wanted_hash)) as p:
 
             if password_hash == wanted_hash:
                 p.success("[+] Password hash found after {} attempts!\n [+] Plaintext found: {}\n [+] from the hash {}!".format(attempts, password.decode('latin-1'), password_hash))
-                exit()
+                sys.exit(0)
 
             attempts += 1
 
     p.failure("[-] Password Hash Not Found")
+    sys.exit(1)

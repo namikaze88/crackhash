@@ -31,8 +31,7 @@ try:
     # Attempt to 'read' password file.
     open(PASSWORD_FILE, 'r', 'latin-1')
 except FileNotFoundError:
-    raise FileNotFoundError("{} does not exist. Install the rockyou.txt
-    word list from an online source.")
+    raise FileNotFoundError("{} does not exist. Install the rockyou.txt word list from an online source.")
 
 attempts = 0
 
